@@ -8,23 +8,25 @@ import moment from "moment";
 const { Paragraph } = Typography;
 const Home = () => {
   const [data, setData] = useState<any[]>([]);
+  const [key, setKey] = useState<String>("");
   const [keyword, setKeyword] = useState<String>("");
   const [urlPath, setUrlPath] = useState("");
 
   const handleChange = (e: String) => {
-    setKeyword(e);
+    setKey(e);
   };
-
-  const handleGetData = () => {
-    setUrlPath(keyword.length !== 0 ? `https://newsapi.org/v2/everything?q=${keyword}&sortBy=publishedAt&apiKey=${process.env.REACT_APP_API_KEY}` : `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.REACT_APP_API_KEY}`);
+  
+  const handleKeyword = () => {
+    setKeyword(key);
   };
 
   const getData = useCallback(async () => {
+    setUrlPath(keyword.length !== 0 ? `https://newsapi.org/v2/everything?q=${keyword}&sortBy=publishedAt&apiKey=${process.env.REACT_APP_API_KEY}` : `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.REACT_APP_API_KEY}`);
     await axios
       .get(urlPath)
       .then((e) => setData(e.data.articles))
       .catch((err) => console.log(err));
-  }, [urlPath]);
+  }, [keyword,urlPath]);
 
   useEffect(() => {
     getData();
@@ -33,7 +35,7 @@ const Home = () => {
   return (
     <Fragment>
       <Input placeholder="Search Keyword" onChange={(e) => handleChange(e.target.value)} style={{ width: 200, margin: "20px 0 0 0" }} />
-      <Button type="default" onClick={() => handleGetData()}>
+      <Button type="default" onClick={() => handleKeyword()}>
         Search
       </Button>
 
